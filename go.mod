@@ -1,4 +1,4 @@
-module github.com/1Password/connect-sdk-go
+module github.com/vponoikoait/connect-sdk-go
 
 go 1.20
 
