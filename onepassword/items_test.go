@@ -8,7 +8,7 @@ import (
 
 var testUsernmae = "user123"
 var testPassword = "Password2!"
-var testOther = "Test Value"
+var testOther = "Test\u003e"
 var testTOTP = "154626"
 
 func TestItemGetValuePassword(t *testing.T) {
