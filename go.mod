@@ -1,12 +1,12 @@
 module github.com/vponoikoait/connect-sdk-go
 
-go 1.20
+go 1.22.5
 
 require (
 	github.com/1Password/connect-sdk-go v1.5.3
-	github.com/google/uuid v1.3.0
+	github.com/google/uuid v1.6.0
 	github.com/opentracing/opentracing-go v1.2.0
-	github.com/stretchr/testify v1.8.2
+	github.com/stretchr/testify v1.9.0
 	github.com/uber/jaeger-client-go v2.30.0+incompatible
 )
 
