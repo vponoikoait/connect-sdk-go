@@ -2,8 +2,12 @@ package onepassword
 
 import (
 	"encoding/json"
+	"fmt"
+	"log"
+	"strconv"
 	"strings"
 	"time"
+	"unicode/utf8"
 )
 
 // ItemCategory Represents the template of the Item
@@ -173,11 +177,51 @@ func (i *Item) GetValue(field string) string {
 		}
 
 		if fieldLabel == f.Label {
-			return f.Value
+			fieldValue, err := tryUnquote(f.Value)
+			if err != nil {
+				log.Fatal(fmt.Sprintf("Failed to unquote Field value %s: %v", f.Value, err))
+			}
+
+			decodedString := decodeUTF8Sequences(fieldValue)
+
+			//if err != nil {
+			//	log.Fatal(fmt.Sprintf("Failed to unquote string %s: %v", f.Value, err))
+			//}
+			return decodedString
 		}
 	}
 
 	return ""
+}
+func tryUnquote(s string) (string, error) {
+	// Check if the string is quoted
+	if len(s) > 0 && s[0] == '"' && s[len(s)-1] == '"' {
+		fieldValue, err := strconv.Unquote(s)
+		if err != nil {
+			log.Fatal(fmt.Sprintf("Failed to unquote string %s: %v", s, err))
+		}
+		return fieldValue, nil
+	}
+	// If not quoted, return the string as is
+	return s, nil
+}
+
+// decodeUTF8Sequences decodes UTF-8 encoded sequences inside a string
+func decodeUTF8Sequences(s string) string {
+	runes := []rune(s)
+	decoded := make([]rune, 0, len(runes))
+
+	for i := 0; i < len(runes); i++ {
+		r, size := utf8.DecodeRuneInString(string(runes[i:]))
+		if r == utf8.RuneError && size == 1 {
+			// Handle invalid UTF-8 sequences
+			continue
+		}
+		decoded = append(decoded, r)
+		i += size - 1
+	}
+
+	return string(decoded)
 }
 
 func (i *Item) SectionLabelForID(id string) string {
